@@ -23,6 +23,8 @@ class AppSettings:
     server_name: str = "mcp-server-starter"
     server_version: str = "0.1.0"
     log_level: str = "INFO"
+    pii_model_name: str = "fastino/gliner2-privacy-filter-PII-multi"
+    pii_threshold: float = 0.5
 
     @property
     def logging_level(self) -> int:
@@ -48,4 +50,16 @@ def load_settings(env: Mapping[str, str] | None = None) -> AppSettings:
         server_name=source.get("MCP_SERVER_NAME", "mcp-server-starter"),
         server_version=source.get("MCP_SERVER_VERSION", "0.1.0"),
         log_level=_read_log_level(source.get("LOG_LEVEL")),
+        pii_model_name=source.get("PII_MODEL_NAME", "fastino/gliner2-privacy-filter-PII-multi"),
+        pii_threshold=_read_float(source.get("PII_THRESHOLD"), default=0.5),
     )
+
+
+def _read_float(raw_value: str | None, default: float) -> float:
+    if raw_value is None:
+        return default
+
+    try:
+        return float(raw_value)
+    except ValueError:
+        return default

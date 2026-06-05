@@ -21,6 +21,12 @@ class LoadSettingsTest(unittest.TestCase):
 
         self.assertEqual(settings.log_level, "INFO")
 
+    def test_loads_pii_settings(self) -> None:
+        settings = load_settings({"PII_MODEL_NAME": "custom/model", "PII_THRESHOLD": "0.7"})
+
+        self.assertEqual(settings.pii_model_name, "custom/model")
+        self.assertEqual(settings.pii_threshold, 0.7)
+
 
 if __name__ == "__main__":
     unittest.main()

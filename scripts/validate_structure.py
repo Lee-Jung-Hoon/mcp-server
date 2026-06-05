@@ -18,6 +18,9 @@ REQUIRED_FILES = [
     "src/mcp_server_starter/features/health/resource.py",
     "src/mcp_server_starter/features/echo/tool.py",
     "src/mcp_server_starter/features/planning/prompt.py",
+    "src/mcp_server_starter/features/pii/tool.py",
+    "src/mcp_server_starter/features/pii/masking.py",
+    "src/mcp_server_starter/features/pii/labels.py",
     "tests/test_settings.py",
     "tests/test_registry.py",
 ]

@@ -30,6 +30,7 @@ tests/                        # 설정/registry 단위 테스트
 - `echo` tool: 메시지를 그대로 또는 대문자로 반환하는 샘플 tool입니다.
 - `mcp://server/info` resource: 서버 메타데이터를 JSON으로 제공합니다.
 - `implementation_plan` prompt: 신규 기능 구현 계획 작성을 돕는 샘플 prompt입니다.
+- `mask_pii` tool: GLiNER2-PII 모델로 텍스트 속 개인정보를 찾아 마스킹하고, 마스킹된 entity 메타데이터를 함께 반환합니다.
 
 ## 시작하기
 
@@ -44,6 +45,44 @@ MCP Inspector로 확인하려면 빌드된 서버 명령을 Inspector에 다음�
 
 ```bash
 npx @modelcontextprotocol/inspector python -m mcp_server_starter
+```
+
+## PII 마스킹 기능
+
+`mask_pii` tool은 기본적으로 `fastino/gliner2-privacy-filter-PII-multi` 모델을 lazy-loading합니다. MCP 클라이언트가 tool 목록만 조회할 때는 모델을 로드하지 않고, 실제 `mask_pii` 호출 시점에 처음 로드합니다.
+
+입력 예시:
+
+```json
+{
+  "text": "Contact Jane Doe at jane@example.com.",
+  "threshold": 0.5
+}
+```
+
+출력은 다음 형태입니다. `entities[].text`에는 원문 개인정보가 포함되므로 로그 저장이나 외부 전송 시 주의하세요.
+
+```json
+{
+  "masked_text": "Contact [PII:PERSON:1] at [PII:EMAIL:1].",
+  "entities": [
+    {
+      "label": "person",
+      "text": "Jane Doe",
+      "start": 8,
+      "end": 16,
+      "mask": "[PII:PERSON:1]",
+      "score": 0.97
+    }
+  ]
+}
+```
+
+환경 변수로 기본 모델과 threshold를 바꿀 수 있습니다.
+
+```bash
+PII_MODEL_NAME=fastino/gliner2-privacy-filter-PII-multi
+PII_THRESHOLD=0.5
 ```
 
 ## 새 기능 추가 방법
